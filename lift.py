@@ -27,7 +27,7 @@ def wait_for_power_up(ser):
                 model = packet[2]
                 print(f"Power-up packet received: FW 1.{fw}, Model {model}")
                 time.sleep(0.005)
-                ser.write(b'00')  # Send double-zero
+                ser.write(b'00')
                 print("Sent double-zero to enter SCL mode.")
                 break
         if time.time() - start_time > 10:
@@ -96,7 +96,6 @@ def main():
         GPIO.add_event_detect(BUTTON_CCW, GPIO.RISING, callback=on_ccw, bouncetime=DEBOUNCE_MS)
         GPIO.add_event_detect(BUTTON_CW, GPIO.RISING, callback=on_cw, bouncetime=DEBOUNCE_MS)
 
-        # Idle monitor loop to detect button releases and stop jogging
         while True:
             b1 = GPIO.input(BUTTON_CCW) == GPIO.HIGH
             b2 = GPIO.input(BUTTON_CW) == GPIO.HIGH
@@ -109,8 +108,6 @@ def main():
                 kill_buffer(ser)
                 last_command = None
                 print("┌───────────────────────────────────┐\n│ Stopped Jog and Killed Buffer     │\n└───────────────────────────────────┘")
-
-            time.sleep(0.05)  # Reduce CPU usage
 
     except KeyboardInterrupt:
         print("\nInterrupted by user. Cleaning up...")

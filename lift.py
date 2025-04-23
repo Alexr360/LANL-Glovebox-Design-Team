@@ -47,10 +47,12 @@ def send_command(ser, command, expect_response=True):
 
 def main():
     try:
-        print("┌───────────────────────────────────────┐\n│ Startup Complete, Lift Ready for Use! │\n└───────────────────────────────────────┘")
+        print("┌───────────────────────────────────────┐\n│ Starting Up Please Wait               │\n└───────────────────────────────────────┘")
         ser = serial.Serial("/dev/ttyUSB0", 9600, timeout=0.1)
         wait_for_power_up(ser)
-        time.sleep(3)
+
+        time.sleep(0.1)
+        print("┌───────────────────────────────────────┐\n│ Startup Complete, Lift Ready for Use! │\n└───────────────────────────────────────┘")
 
         last_command = None
         # Continuously read buttons and jog motor accordingly

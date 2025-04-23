@@ -2,8 +2,8 @@ import RPi.GPIO as GPIO  # Import Raspberry Pi GPIO library
 import time  # Import time library for delays
 
 # Define GPIO pins for buttons
-button1 = 11
-button2 = 23
+button1 = 10
+button2 = 11
 
 GPIO.setwarnings(False)  # Ignore warning for now
 GPIO.setmode(GPIO.BOARD)  # Use physical pin numbering

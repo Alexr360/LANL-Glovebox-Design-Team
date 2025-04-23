@@ -40,7 +40,8 @@ def send_command(ser, command, expect_response=True):
         if expect_response:
             time.sleep(0.1)
             response = ser.read_all().decode('ascii').strip()
-            print(f"Response: {response}" if response else "No response.")
+            if response != "%":
+                print(f"Unexpected Response: {response}")
     except Exception as e:
         print(f"Error sending command: {e}")
 
@@ -76,10 +77,17 @@ def main():
                 send_command(ser, "DI1")
                 send_command(ser, "CJ")
                 last_command = "CW"
-            elif not b1 and not b2 or (b1 and b2):
-                # No button or both pressed: Stop jogging
+
+            elif not b1 and not b2:
+                # No buttons: Stop jogging
                 send_command(ser, "SJ")
                 time.sleep(0.1)
+
+            elif b1 and b2:
+                # Both buttons: Stop and kill buffer
+                send_command(ser, "SK")
+                time.sleep(0.1)
+
 
     except serial.SerialException as e:
         print(f"Serial error: {e}")

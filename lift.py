@@ -60,7 +60,7 @@ def main():
             elif choice == "2":
                 send_command(ser, "JA10")
                 send_command(ser, "JL25")
-                send_command(ser, "JS0")
+                send_command(ser, "JS5")
                 send_command(ser, "DI-1")
                 send_command(ser, "CJ")
             elif choice == "3":

@@ -66,6 +66,7 @@ def main():
                 send_command(ser, "DI-1")
                 send_command(ser, "CJ")
                 last_command = "CCW"
+                print("┌───────────────────────────────────┐\n│ Started Jog: Counter Clockwise    │\n└───────────────────────────────────┘")
 
             elif b2 and not b1 and last_command != "CW":
                 # Button2 pressed: Jog CW
@@ -76,18 +77,22 @@ def main():
                 send_command(ser, "DI1")
                 send_command(ser, "CJ")
                 last_command = "CW"
+                print("┌───────────────────────────────────┐\n│ Started Jog: Clockwise            │\n└───────────────────────────────────┘")
 
             elif not b1 and not b2:
                 # No buttons: Stop jogging
                 send_command(ser, "SJ")
                 last_command = None
+                print("┌───────────────────────────────────┐\n│ Stopped Jog                       │\n└───────────────────────────────────┘")
                 time.sleep(0.1)
 
             elif b1 and b2:
                 # Both buttons: Stop and kill buffer
                 send_command(ser, "SK")
                 last_command = None
+                print("┌───────────────────────────────────┐\n│ Stopped Jog and Killed Buffer     │\n└───────────────────────────────────┘")
                 time.sleep(0.1)
+
 
 
     except serial.SerialException as e:

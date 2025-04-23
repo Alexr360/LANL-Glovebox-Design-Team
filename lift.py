@@ -15,7 +15,7 @@ def wait_for_power_up(ser):
                 ser.write(b'00')  # Send double-zero
                 print("Sent double-zero to enter SCL mode.")
                 break
-        if time.time() - start_time > 30:
+        if time.time() - start_time > 10:
             print("No power-up packet received within 30 seconds. Proceeding without it.")
             break
         time.sleep(0.05)

@@ -7,7 +7,7 @@ BUTTON_CCW = 10
 BUTTON_CW = 11
 SERIAL_PORT = "/dev/ttyUSB0"
 BAUD_RATE = 9600
-DEBOUNCE_MS = 200
+DEBOUNCE_MS = 100
 
 # ─── Setup ────────────────────────────────────────────────
 GPIO.setwarnings(False)

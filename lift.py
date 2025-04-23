@@ -2,14 +2,19 @@ import RPi.GPIO as GPIO
 import serial
 import time
 
-# Define GPIO pins for buttons
-button1 = 10  # CCW
-button2 = 11  # CW
+# ─── Configuration Constants ──────────────────────────────
+BUTTON_CCW = 10
+BUTTON_CW = 11
+SERIAL_PORT = "/dev/ttyUSB0"
+BAUD_RATE = 9600
+DEBOUNCE_MS = 200
 
+# ─── Setup ────────────────────────────────────────────────
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BOARD)
-GPIO.setup(button1, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-GPIO.setup(button2, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+GPIO.setup(BUTTON_CCW, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+GPIO.setup(BUTTON_CW, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+
 
 def wait_for_power_up(ser):
     print("Waiting for power-up packet. (10s)")
@@ -39,69 +44,80 @@ def send_command(ser, command, expect_response=True):
         if expect_response:
             time.sleep(0.1)
             response = ser.read_all().decode('ascii').strip()
-            if response != "%":
-                print(f"Unexpected Response: {response}")
+            if response == "?":
+                print(f"⚠ Drive did not understand command: {command}")
+            elif response != "%" and response != "":
+                print(f"⚠ Unexpected Response: {response}")
     except Exception as e:
         print(f"Error sending command: {e}")
+
+
+def jog_motor(ser, direction):
+    send_command(ser, "SJ")
+    send_command(ser, "JA10")
+    send_command(ser, "JL25")
+    send_command(ser, "JS5")
+    send_command(ser, f"DI{1 if direction == 'CW' else -1}")
+    send_command(ser, "CJ")
+
+
+def stop_motor(ser):
+    send_command(ser, "SJ")
+
+
+def kill_buffer(ser):
+    send_command(ser, "SK")
 
 
 def main():
     try:
         print("┌───────────────────────────────────────┐\n│ Starting Up Please Wait               │\n└───────────────────────────────────────┘")
-        ser = serial.Serial("/dev/ttyUSB0", 9600, timeout=0.1)
+        ser = serial.Serial(SERIAL_PORT, BAUD_RATE, timeout=0.1)
         wait_for_power_up(ser)
 
-        time.sleep(0.1)
         print("┌───────────────────────────────────────┐\n│ Startup Complete, Lift Ready for Use! │\n└───────────────────────────────────────┘")
 
         last_command = None
-        # Continuously read buttons and jog motor accordingly
-        while True:
-            b1 = GPIO.input(button1) == GPIO.HIGH
-            b2 = GPIO.input(button2) == GPIO.HIGH
 
-            if b1 and not b2 and last_command != "CCW":
-                # Button1 pressed: Jog CCW
-                send_command(ser, "SJ")
-                send_command(ser, "JA10")
-                send_command(ser, "JL25")
-                send_command(ser, "JS5")
-                send_command(ser, "DI-1")
-                send_command(ser, "CJ")
+        def on_ccw(channel):
+            nonlocal last_command
+            if last_command != "CCW":
+                jog_motor(ser, "CCW")
                 last_command = "CCW"
                 print("┌───────────────────────────────────┐\n│ Started Jog: Counter Clockwise    │\n└───────────────────────────────────┘")
 
-            elif b2 and not b1 and last_command != "CW":
-                # Button2 pressed: Jog CW
-                send_command(ser, "SJ")
-                send_command(ser, "JA10")
-                send_command(ser, "JL25")
-                send_command(ser, "JS5")
-                send_command(ser, "DI1")
-                send_command(ser, "CJ")
+        def on_cw(channel):
+            nonlocal last_command
+            if last_command != "CW":
+                jog_motor(ser, "CW")
                 last_command = "CW"
                 print("┌───────────────────────────────────┐\n│ Started Jog: Clockwise            │\n└───────────────────────────────────┘")
 
-            elif not b1 and not b2:
-                send_command(ser, "SJ")
-                # No buttons: Stop jogging
-                if last_command != "STOP":
-                    last_command = "STOP"
-                    print("┌───────────────────────────────────┐\n│ Stopped Jog                       │\n└───────────────────────────────────┘")
-                time.sleep(0.1)
+        GPIO.add_event_detect(BUTTON_CCW, GPIO.RISING, callback=on_ccw, bouncetime=DEBOUNCE_MS)
+        GPIO.add_event_detect(BUTTON_CW, GPIO.RISING, callback=on_cw, bouncetime=DEBOUNCE_MS)
 
+        # Idle monitor loop to detect button releases and stop jogging
+        while True:
+            b1 = GPIO.input(BUTTON_CCW) == GPIO.HIGH
+            b2 = GPIO.input(BUTTON_CW) == GPIO.HIGH
+
+            if not b1 and not b2 and last_command != "STOP":
+                stop_motor(ser)
+                last_command = "STOP"
+                print("┌───────────────────────────────────┐\n│ Stopped Jog                       │\n└───────────────────────────────────┘")
             elif b1 and b2:
-                # Both buttons: Stop and kill buffer
-                send_command(ser, "SK")
+                kill_buffer(ser)
                 last_command = None
                 print("┌───────────────────────────────────┐\n│ Stopped Jog and Killed Buffer     │\n└───────────────────────────────────┘")
-                time.sleep(0.1)
 
+            time.sleep(0.05)  # Reduce CPU usage
 
-
+    except KeyboardInterrupt:
+        print("\nInterrupted by user. Cleaning up...")
     except serial.SerialException as e:
         print(f"Serial error: {e}")
     finally:
+        GPIO.cleanup()
         if 'ser' in locals() and ser.is_open:
             ser.close()
             print("Serial connection closed.")

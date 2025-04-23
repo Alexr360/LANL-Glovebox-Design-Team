@@ -60,7 +60,6 @@ def main():
             if b1 and not b2 and last_command != "CCW":
                 # Button1 pressed: Jog CCW
                 send_command(ser, "SJ")
-                time.sleep(0.1)
                 send_command(ser, "JA10")
                 send_command(ser, "JL25")
                 send_command(ser, "JS5")
@@ -71,7 +70,6 @@ def main():
             elif b2 and not b1 and last_command != "CW":
                 # Button2 pressed: Jog CW
                 send_command(ser, "SJ")
-                time.sleep(0.1)
                 send_command(ser, "JA10")
                 send_command(ser, "JL25")
                 send_command(ser, "JS5")

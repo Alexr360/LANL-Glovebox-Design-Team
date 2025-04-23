@@ -50,12 +50,14 @@ def main():
         ser = serial.Serial("/dev/ttyUSB0", 9600, timeout=0.1)
         wait_for_power_up(ser)
         time.sleep(3)
+
+        last_command = None
         # Continuously read buttons and jog motor accordingly
         while True:
             b1 = GPIO.input(button1) == GPIO.HIGH
             b2 = GPIO.input(button2) == GPIO.HIGH
 
-            if b1 and not b2:
+            if b1 and not b2 and last_command != "CCW":
                 # Button1 pressed: Jog CCW
                 send_command(ser, "SJ")
                 time.sleep(0.1)
@@ -64,7 +66,9 @@ def main():
                 send_command(ser, "JS5")
                 send_command(ser, "DI-1")
                 send_command(ser, "CJ")
-            elif b2 and not b1:
+                last_command = "CCW"
+
+            elif b2 and not b1 and last_command != "CW":
                 # Button2 pressed: Jog CW
                 send_command(ser, "SJ")
                 time.sleep(0.1)
@@ -73,11 +77,11 @@ def main():
                 send_command(ser, "JS5")
                 send_command(ser, "DI1")
                 send_command(ser, "CJ")
-            else:
+                last_command = "CW"
+            elif not b1 and not b2 or (b1 and b2):
                 # No button or both pressed: Stop jogging
                 send_command(ser, "SJ")
-
-            time.sleep(0.1)
+                time.sleep(0.1)
 
     except serial.SerialException as e:
         print(f"Serial error: {e}")

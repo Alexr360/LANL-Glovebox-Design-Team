@@ -47,6 +47,7 @@ def send_command(ser, command, expect_response=True):
 
 def main():
     try:
+        print("┌───────────────────────────────────────┐\n│ Startup Complete, Lift Ready for Use! │\n└───────────────────────────────────────┘")
         ser = serial.Serial("/dev/ttyUSB0", 9600, timeout=0.1)
         wait_for_power_up(ser)
         time.sleep(3)

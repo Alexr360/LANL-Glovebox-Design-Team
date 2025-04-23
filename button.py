@@ -11,7 +11,18 @@ GPIO.setup(button1, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)  # Set pin 10 to be an 
 GPIO.setup(button2, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)  # Set pin 18 to be an input pin and set initial value to be pulled low (off)
 
 while True:  # Run forever
-    pin_10_status = "HIGH" if GPIO.input(button1) == GPIO.HIGH else "LOW"
-    pin_18_status = "HIGH" if GPIO.input(button2) == GPIO.HIGH else "LOW"
-    print(f"Button 1: {pin_10_status}, Button 2: {pin_18_status}")
-    time.sleep(0.5)  # Wait for 1/2 second
+    button1Status = GPIO.input(button1) == GPIO.HIGH
+    button2Status = GPIO.input(button2) == GPIO.HIGH
+    
+    if button1Status and button2Status:  # If both buttons are pressed
+        print("Both buttons pressed")
+
+    elif button1Status:  # If button 1 is pressed
+        print("Button 1 pressed")
+
+    elif button2Status:  # If button 2 is pressed
+        print("Button 2 pressed")
+        
+    else:
+        print("No button pressed")
+    time.sleep(0.1)

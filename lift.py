@@ -36,8 +36,8 @@ def send_command(ser, command, expect_response=True):
 def main():
     try:
         ser = serial.Serial("/dev/ttyUSB0", 9600, timeout=0.1)
-        # wait_for_power_up(ser)
-        # time.sleep(3)
+        wait_for_power_up(ser)
+        time.sleep(3)
         # Now in SCL mode
         while True:
             print("\nEnter a command: ")
@@ -49,13 +49,13 @@ def main():
             if choice == "1":
                 send_command(ser, "JA10")
                 send_command(ser, "JL25")
-                send_command(ser, "JS20")
+                send_command(ser, "JS5")
                 send_command(ser, "CJ")
             elif choice == "2":
                 send_command(ser, "JA10")
                 send_command(ser, "JL25")
-                send_command(ser, "JS20")
-                send_command(ser, "CS-20")
+                send_command(ser, "JS0")
+                send_command(ser, "CS-5")
                 send_command(ser, "CJ")
             elif choice == "3":
                 send_command(ser, "SK")

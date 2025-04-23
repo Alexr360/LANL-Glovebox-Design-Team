@@ -50,15 +50,16 @@ def main():
                 send_command(ser, "JA10")
                 send_command(ser, "JL25")
                 send_command(ser, "JS5")
+                send_command(ser, "DI1")
                 send_command(ser, "CJ")
             elif choice == "2":
                 send_command(ser, "JA10")
                 send_command(ser, "JL25")
                 send_command(ser, "JS0")
-                send_command(ser, "CS-5")
+                send_command(ser, "DI-1")
                 send_command(ser, "CJ")
             elif choice == "3":
-                send_command(ser, "SK")
+                send_command(ser, "SJ")
             elif choice == "q":
                 print("Exiting program...")
                 break

@@ -5,6 +5,9 @@ import time
 # ─── Configuration Constants ──────────────────────────────
 BUTTON_CCW = 10
 BUTTON_CW = 11
+DRIVE_SPEED = 10
+ACCELERATION = 10
+DECELERATION = 25
 SERIAL_PORT = "/dev/ttyUSB0"
 BAUD_RATE = 9600
 DEBOUNCE_MS = 100
@@ -54,9 +57,9 @@ def send_command(ser, command, expect_response=True):
 
 def jog_motor(ser, direction):
     send_command(ser, "SJ")
-    send_command(ser, "JA10")
-    send_command(ser, "JL25")
-    send_command(ser, "JS5")
+    send_command(ser, f"JA{ACCELERATION}")
+    send_command(ser, f"JL{DECELERATION}")
+    send_command(ser, f"JS{DRIVE_SPEED}")
     send_command(ser, f"DI{1 if direction == 'CW' else -1}")
     send_command(ser, "CJ")
 
@@ -108,6 +111,8 @@ def main():
                 kill_buffer(ser)
                 last_command = None
                 print("┌───────────────────────────────────┐\n│ Stopped Jog and Killed Buffer     │\n└───────────────────────────────────┘")
+
+            time.sleep(0.05)
 
     except KeyboardInterrupt:
         print("\nInterrupted by user. Cleaning up...")

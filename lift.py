@@ -85,8 +85,9 @@ def main():
             elif not b1 and not b2:
                 # No buttons: Stop jogging
                 send_command(ser, "SJ")
-                last_command = None
-                print("┌───────────────────────────────────┐\n│ Stopped Jog                       │\n└───────────────────────────────────┘")
+                last_command = "STOP"
+                if last_command != "STOP":
+                    print("┌───────────────────────────────────┐\n│ Stopped Jog                       │\n└───────────────────────────────────┘")
                 time.sleep(0.1)
 
             elif b1 and b2:

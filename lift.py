@@ -116,6 +116,10 @@ def main():
 
     except KeyboardInterrupt:
         print("\nInterrupted by user. Cleaning up...")
+        GPIO.cleanup()
+        if 'ser' in locals() and ser.is_open:
+            ser.close()
+            print("Serial connection closed.")
     except serial.SerialException as e:
         print(f"Serial error: {e}")
     finally:

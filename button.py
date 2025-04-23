@@ -1,6 +1,8 @@
 import RPi.GPIO as GPIO
 import time
 
+print("Button Press Detection Script")
+
 # Use Broadcom pin-numbering scheme
 GPIO.setmode(GPIO.BCM)
 

@@ -52,12 +52,16 @@ def main():
             print("q = Quit")
             choice = input("Choice: ").strip().lower()
             if choice == "1":
+                send_command(ser, "SJ")
+                time.sleep(0.1)
                 send_command(ser, "JA10")
                 send_command(ser, "JL25")
                 send_command(ser, "JS5")
                 send_command(ser, "DI1")
                 send_command(ser, "CJ")
             elif choice == "2":
+                send_command(ser, "SJ")
+                time.sleep(0.1)
                 send_command(ser, "JA10")
                 send_command(ser, "JL25")
                 send_command(ser, "JS5")

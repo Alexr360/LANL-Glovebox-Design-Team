@@ -12,7 +12,7 @@ GPIO.setup(button1, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 GPIO.setup(button2, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
 def wait_for_power_up(ser):
-    print("Waiting for power-up packet... (power cycle the drive)")
+    print("Waiting for power-up packet. (10s)")
     start_time = time.time()
     while True:
         if ser.in_waiting >= 3:

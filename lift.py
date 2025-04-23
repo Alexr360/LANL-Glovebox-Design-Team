@@ -1,5 +1,15 @@
+import RPi.GPIO as GPIO
 import serial
 import time
+
+# Define GPIO pins for buttons
+button1 = 10  # CCW
+button2 = 11  # CW
+
+GPIO.setwarnings(False)
+GPIO.setmode(GPIO.BOARD)
+GPIO.setup(button1, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+GPIO.setup(button2, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
 def wait_for_power_up(ser):
     print("Waiting for power-up packet... (power cycle the drive)")
@@ -20,8 +30,8 @@ def wait_for_power_up(ser):
             break
         time.sleep(0.05)
 
+
 def send_command(ser, command, expect_response=True):
-    """Send SCL command with carriage return."""
     try:
         full_cmd = command + '\r'
         ser.reset_input_buffer()
@@ -30,36 +40,23 @@ def send_command(ser, command, expect_response=True):
         if expect_response:
             time.sleep(0.1)
             response = ser.read_all().decode('ascii').strip()
-            if response:
-                print(f"Response: {response}")
-            else:
-                print("No response.")
+            print(f"Response: {response}" if response else "No response.")
     except Exception as e:
         print(f"Error sending command: {e}")
+
 
 def main():
     try:
         ser = serial.Serial("/dev/ttyUSB0", 9600, timeout=0.1)
         wait_for_power_up(ser)
         time.sleep(3)
-        # Now in SCL mode
+        # Continuously read buttons and jog motor accordingly
         while True:
-            print("\nEnter a command: ")
-            print("1 = Clockwise")
-            print("2 = Counterclockwise")
-            print("3 = Stop")
-            print("4 = Emergency Stop")
-            print("q = Quit")
-            choice = input("Choice: ").strip().lower()
-            if choice == "1":
-                send_command(ser, "SJ")
-                time.sleep(0.1)
-                send_command(ser, "JA10")
-                send_command(ser, "JL25")
-                send_command(ser, "JS5")
-                send_command(ser, "DI1")
-                send_command(ser, "CJ")
-            elif choice == "2":
+            b1 = GPIO.input(button1) == GPIO.HIGH
+            b2 = GPIO.input(button2) == GPIO.HIGH
+
+            if b1 and not b2:
+                # Button1 pressed: Jog CCW
                 send_command(ser, "SJ")
                 time.sleep(0.1)
                 send_command(ser, "JA10")
@@ -67,15 +64,21 @@ def main():
                 send_command(ser, "JS5")
                 send_command(ser, "DI-1")
                 send_command(ser, "CJ")
-            elif choice == "3":
+            elif b2 and not b1:
+                # Button2 pressed: Jog CW
                 send_command(ser, "SJ")
-            elif choice == "4":
-                send_command(ser, "SK")
-            elif choice == "q":
-                print("Exiting program...")
-                break
+                time.sleep(0.1)
+                send_command(ser, "JA10")
+                send_command(ser, "JL25")
+                send_command(ser, "JS5")
+                send_command(ser, "DI1")
+                send_command(ser, "CJ")
             else:
-                print("Invalid input. Please enter 1, 2, 3, or q.")
+                # No button or both pressed: Stop jogging
+                send_command(ser, "SJ")
+
+            time.sleep(0.1)
+
     except serial.SerialException as e:
         print(f"Serial error: {e}")
     finally:

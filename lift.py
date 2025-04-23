@@ -26,7 +26,7 @@ def wait_for_power_up(ser):
                 print("Sent double-zero to enter SCL mode.")
                 break
         if time.time() - start_time > 10:
-            print("No power-up packet received within 30 seconds. Proceeding without it.")
+            print("No power-up packet received within 10 seconds. Proceeding without it.")
             break
         time.sleep(0.05)
 
@@ -36,7 +36,6 @@ def send_command(ser, command, expect_response=True):
         full_cmd = command + '\r'
         ser.reset_input_buffer()
         ser.write(full_cmd.encode('ascii'))
-        print(f"Sent: {command}")
         if expect_response:
             time.sleep(0.1)
             response = ser.read_all().decode('ascii').strip()
@@ -81,11 +80,13 @@ def main():
             elif not b1 and not b2:
                 # No buttons: Stop jogging
                 send_command(ser, "SJ")
+                last_command = None
                 time.sleep(0.1)
 
             elif b1 and b2:
                 # Both buttons: Stop and kill buffer
                 send_command(ser, "SK")
+                last_command = None
                 time.sleep(0.1)
 
 

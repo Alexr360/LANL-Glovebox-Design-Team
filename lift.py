@@ -83,10 +83,10 @@ def main():
                 print("┌───────────────────────────────────┐\n│ Started Jog: Clockwise            │\n└───────────────────────────────────┘")
 
             elif not b1 and not b2:
-                # No buttons: Stop jogging
                 send_command(ser, "SJ")
-                last_command = "STOP"
+                # No buttons: Stop jogging
                 if last_command != "STOP":
+                    last_command = "STOP"
                     print("┌───────────────────────────────────┐\n│ Stopped Jog                       │\n└───────────────────────────────────┘")
                 time.sleep(0.1)
 

@@ -48,6 +48,7 @@ def main():
             print("1 = Clockwise")
             print("2 = Counterclockwise")
             print("3 = Stop")
+            print("4 = Emergency Stop")
             print("q = Quit")
             choice = input("Choice: ").strip().lower()
             if choice == "1":
@@ -64,6 +65,8 @@ def main():
                 send_command(ser, "CJ")
             elif choice == "3":
                 send_command(ser, "SJ")
+            elif choice == "4":
+                send_command(ser, "SK")
             elif choice == "q":
                 print("Exiting program...")
                 break

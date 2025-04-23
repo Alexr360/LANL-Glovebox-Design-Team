@@ -58,6 +58,13 @@ The software is implemented in Python and uses the following libraries:
 2. Wire the CW and CCW buttons to the appropriate GPIO pins (`BUTTON_CW` and `BUTTON_CCW`).
 3. Power on the system and run the Python script.
 
+## Process to Update Code
+
+1. Make changes on GitHub.
+2. Run `cd LANL-Glovebox-Design-Team`.
+3. Run `git pull`.
+4. Run `python3 lift.py` or `sudo reboot`.
+
 ## Possible Bugs
 
 - If you get the GPIO busy command, it is likely that the Python program is already running in the background.  

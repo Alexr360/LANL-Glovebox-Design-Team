@@ -3,6 +3,7 @@ import time
 
 def wait_for_power_up(ser):
     print("Waiting for power-up packet... (power cycle the drive)")
+    start_time = time.time()
     while True:
         if ser.in_waiting >= 3:
             packet = ser.read(3)
@@ -14,6 +15,9 @@ def wait_for_power_up(ser):
                 ser.write(b'00')  # Send double-zero
                 print("Sent double-zero to enter SCL mode.")
                 break
+        if time.time() - start_time > 30:
+            print("No power-up packet received within 30 seconds. Proceeding without it.")
+            break
         time.sleep(0.05)
 
 def send_command(ser, command, expect_response=True):

@@ -11,9 +11,9 @@ BUTTON_CW = 11
 UP_SPEED = 1.6
 DOWN_SPEED = 1
 # Motor acceleration rate
-ACCELERATION = 20
+ACCELERATION = 0.5
 # Motor deceleration rate
-DECELERATION = 2
+DECELERATION = 0.5
 # Serial port for motor controller
 SERIAL_PORT = "/dev/ttyUSB0"
 # Baud rate for serial communication

@@ -8,9 +8,9 @@ BUTTON_CCW = 10
 # GPIO pin for clockwise button
 BUTTON_CW = 11
 # Motor drive speed
-DRIVE_SPEED = 0.25
+DRIVE_SPEED = 0.75
 # Motor acceleration rate
-ACCELERATION = 1
+ACCELERATION = 0.25
 # Motor deceleration rate
 DECELERATION = 2
 # Serial port for motor controller

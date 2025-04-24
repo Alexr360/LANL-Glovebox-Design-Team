@@ -8,11 +8,11 @@ BUTTON_CCW = 10
 # GPIO pin for clockwise button
 BUTTON_CW = 11
 # Motor drive speed
-DRIVE_SPEED = 1
+DRIVE_SPEED = 0.5
 # Motor acceleration rate
-ACCELERATION = 10
+ACCELERATION = 1
 # Motor deceleration rate
-DECELERATION = 25
+DECELERATION = 2
 # Serial port for motor controller
 SERIAL_PORT = "/dev/ttyUSB0"
 # Baud rate for serial communication

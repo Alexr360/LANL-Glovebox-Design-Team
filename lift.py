@@ -1,4 +1,4 @@
-import RPi.GPIO as GPIO
++import RPi.GPIO as GPIO
 import serial
 import time
 
@@ -10,7 +10,7 @@ BUTTON_CW = 11
 # Motor drive speed
 DRIVE_SPEED = 1.5
 # Motor acceleration rate
-ACCELERATION = 0.25
+ACCELERATION = 20
 # Motor deceleration rate
 DECELERATION = 2
 # Serial port for motor controller

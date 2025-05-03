@@ -146,35 +146,36 @@ def main():
         # Main loop to monitor button states
         while True:
             b1 = GPIO.input(BUTTON_CCW) == GPIO.HIGH  # Check CCW button state
-            b2 = GPIO.input(BUTTON_CW) == GPIO.HIGH  # Check CW button state
+            b2 = GPIO.inpu        jog_start_time = None  # Track when jogging starts
 
-            if not b1 and not b2 and last_command != "STOP":  # No buttons pressed
+        while True:
+            b1 = GPIO.input(BUTTON_CCW) == GPIO.HIGH  # CCW button state
+            b2 = GPIO.input(BUTTON_CW) == GPIO.HIGH   # CW button state
+
+            if b1 or b2:
+                if jog_start_time is None:
+                    jog_start_time = time.time()  # Start jogging timer
+            else:
+                jog_start_time = None  # Reset jogging timer if no button is pressed
+
+            if not b1 and not b2 and last_command != "STOP":
                 stop_motor(ser)
                 last_command = "STOP"
+                jog_start_time = None
                 print("┌───────────────────────────────────┐\n│ Stopped Jog                       │\n└───────────────────────────────────┘")
-            elif b1 and b2:  # Both buttons pressed
+            elif b1 and b2:
                 kill_buffer(ser)
                 last_command = None
+                jog_start_time = None
                 print("┌───────────────────────────────────┐\n│ Stopped Jog and Killed Buffer     │\n└───────────────────────────────────┘")
+            elif jog_start_time and (time.time() - jog_start_time > 30):
+                stop_motor(ser)
+                last_command = "STOP"
+                jog_start_time = None
+                print("┌───────────────────────────────────┐\n│ Jog Timeout: Stopped after 30s    │\n└───────────────────────────────────┘")
 
-            time.sleep(0.05)  # Small delay to reduce CPU usage
-
-    except KeyboardInterrupt:
-        # Handle user interrupt (Ctrl+C)
-        print("\nInterrupted by user. Cleaning up...")
-        GPIO.cleanup()
-        if 'ser' in locals() and ser.is_open:
-            ser.close()
-            print("Serial connection closed.")
-    except serial.SerialException as e:
-        # Handle serial communication errors
-        print(f"Serial error: {e}")
-    finally:
-        # Cleanup GPIO and close serial connection on exit
-        GPIO.cleanup()
-        if 'ser' in locals() and ser.is_open:
-            ser.close()
-            print("Serial connection closed.")
-
+            time.sleep(0.05)
+            
+            
 if __name__ == "__main__":
     main()

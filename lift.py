@@ -8,7 +8,7 @@ BUTTON_CCW = 10
 # GPIO pin for clockwise button
 BUTTON_CW = 11
 # Motor drive speed
-UP_SPEED = 1.6
+UP_SPEED = 3
 DOWN_SPEED = 3
 # Motor acceleration rate
 ACCELERATION = 0.5
@@ -82,7 +82,7 @@ def jog_motor(ser, direction):
     send_command(ser, "SJ")  # Stop any current jog
     send_command(ser, f"JA{ACCELERATION}")  # Set acceleration
     send_command(ser, f"JL{DECELERATION}")  # Set deceleration
-    send_command(ser, f"JS{UP_SPEED if direction == 'CW' else DOWN_SPEED}")  # Set speed
+    send_command(ser, f"JS{DOWN_SPEED if direction == 'CW' else UP_SPEED}")  # Set speed
     send_command(ser, f"DI{1 if direction == 'CW' else -1}")  # Set direction
     send_command(ser, "CJ")  # Start jog
 

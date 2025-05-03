@@ -35,10 +35,16 @@ def wait_for_power_up(ser):
     """
     Wait for the motor controller to send a power-up packet.
     If received, send a double-zero command to enter SCL mode.
+    Also exit early if a button is pressed.
     """
     print("Waiting for power-up packet. (10s)")
     start_time = time.time()
     while True:
+        # Check if a button is pressed to break out of wait early
+        if GPIO.input(BUTTON_CCW) == GPIO.HIGH or GPIO.input(BUTTON_CW) == GPIO.HIGH:
+            print("Button press detected. Skipping power-up wait.")
+            break
+
         if ser.in_waiting >= 3:  # Check if at least 3 bytes are available
             packet = ser.read(3)
             if packet[0] == 0xFF:  # Check for power-up packet signature
@@ -49,9 +55,11 @@ def wait_for_power_up(ser):
                 ser.write(b'00')  # Send double-zero command
                 print("Sent double-zero to enter SCL mode.")
                 break
+
         if time.time() - start_time > 10:  # Timeout after 10 seconds
             print("No power-up packet received within 10 seconds. Proceeding without it.")
             break
+
         time.sleep(0.05)
 
 

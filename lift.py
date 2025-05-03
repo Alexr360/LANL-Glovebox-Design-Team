@@ -144,9 +144,7 @@ def main():
         GPIO.add_event_detect(BUTTON_CW, GPIO.RISING, callback=on_cw, bouncetime=DEBOUNCE_MS)
 
         # Main loop to monitor button states
-        while True:
-            b1 = GPIO.input(BUTTON_CCW) == GPIO.HIGH  # Check CCW button state
-            b2 = GPIO.inpu        jog_start_time = None  # Track when jogging starts
+        jog_start_time = None  # Track when jogging starts
 
         while True:
             b1 = GPIO.input(BUTTON_CCW) == GPIO.HIGH  # CCW button state

@@ -174,6 +174,16 @@ def main():
 
             time.sleep(0.05)
             
+    except KeyboardInterrupt:
+        GPIO.cleanup()
+        if 'ser' in locals() and ser.is_open:
+            ser.close()
+    except serial.SerialException as e:
+        print(f"Serial Error: {e}")
+    finally:
+        GPIO.cleanup()
+        if 'ser' in locals() and ser.is_open:
+            ser.close()
             
 if __name__ == "__main__":
     main()

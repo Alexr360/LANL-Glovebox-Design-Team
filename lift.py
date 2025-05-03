@@ -9,7 +9,7 @@ BUTTON_CCW = 10
 BUTTON_CW = 11
 # Motor drive speed
 UP_SPEED = 1.6
-DOWN_SPEED = 1.6
+DOWN_SPEED = 3
 # Motor acceleration rate
 ACCELERATION = 0.5
 # Motor deceleration rate

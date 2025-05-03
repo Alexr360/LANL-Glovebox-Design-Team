@@ -56,8 +56,8 @@ def wait_for_power_up(ser):
                 print("Sent double-zero to enter SCL mode.")
                 break
 
-        if time.time() - start_time > 10:  # Timeout after 10 seconds
-            print("No power-up packet received within 10 seconds. Proceeding without it.")
+        if time.time() - start_time > 60:  # Timeout after 10 seconds
+            print("No power-up packet received within 60 seconds. Proceeding without it.")
             break
 
         time.sleep(0.05)
